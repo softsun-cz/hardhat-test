@@ -1,5 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-etherscan");
+
 
 const fs = require('fs');
 const mnemonic = fs.readFileSync('.secret').toString().trim();
@@ -16,7 +18,7 @@ module.exports = {
   settings: {
    optimizer: {
     enabled: true,
-    runs: 1500
+    //runs: 1500
    }
   }
  },

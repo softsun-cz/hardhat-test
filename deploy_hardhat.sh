@@ -48,6 +48,9 @@ do
  fi
 done
 hardhat run verify $VERIFY --network $NETWORK | tee -a $LOG
+# npx hardhat verify --network mainnet DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1"
+
+
 
 # sw=false
 # for i in "${!ARRAY[@]}"
