@@ -14,7 +14,7 @@ const api_key_hecoinfo = fs.readFileSync('.apikey_hecoinfo').toString().trim();
 
 module.exports = {
  solidity: {
-  version: '^0.8.11',
+  version: '0.8.11',
   settings: {
    optimizer: {
     enabled: true,
