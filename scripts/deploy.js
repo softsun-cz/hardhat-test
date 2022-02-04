@@ -1,8 +1,9 @@
-//const hre = require("hardhat");
+const hre = require("hardhat");
 
 async function main() {
- await deployer.deploy(Sample);
- const sample = await Sample.deployed();
+ const Sample = await ethers.getContractFactory('Sample');
+ const sample = await Sample.deploy();
+ await sample.deployed();
 /*
  var piggy = await sample.collectionAdd.call('Piggy');
  piggy = await piggy.toString();
@@ -21,17 +22,11 @@ async function main() {
  await sample.propertyAdd(duck, 'Beak');
  await sample.propertyAdd(duck, 'Wings');
  */
-/*
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
-  await greeter.deployed();
-  console.log("Greeter deployed to:", greeter.address);
-*/
 }
 
-  main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+main()
+ .then(() => process.exit(0))
+ .catch((error) => {
+  console.error(error);
+  process.exit(1);
+ });
