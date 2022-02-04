@@ -33,6 +33,7 @@ if [ -d "$BUILD" ]; then
  rm -r $BUILD
 fi
 hardhat deploy --network $NETWORK 2>&1 | tee $LOG
+#npx hardhat run --network $NETWORK scripts/deploy.js
 
 CONTRACTS=`node deploy-contracts.js`
 ARRAY=($CONTRACTS)
@@ -48,7 +49,7 @@ do
  fi
 done
 hardhat run verify $VERIFY --network $NETWORK | tee -a $LOG
-# npx hardhat verify --network mainnet DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1"
+# npx hardhat verify --network $NETWORK DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1"
 
 
 

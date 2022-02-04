@@ -2,7 +2,6 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 
-
 const fs = require('fs');
 const mnemonic = fs.readFileSync('.secret').toString().trim();
 const api_key_bscscan = fs.readFileSync('.apikey_bscscan').toString().trim();
