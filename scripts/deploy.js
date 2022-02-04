@@ -4,6 +4,8 @@ async function main() {
  const Sample = await ethers.getContractFactory('Sample');
  const sample = await Sample.deploy();
  await sample.deployed();
+ console.log();
+ console.log('Sample:', sample.address);
 /*
  var piggy = await sample.collectionAdd.call('Piggy');
  piggy = await piggy.toString();
