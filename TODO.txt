@@ -1,0 +1,2 @@
+- zjistit, proc duck vraci value = 0
+- zjistit, jak vypsat u contractu block number, block timestamp, wallet balance, gas used, gas price and total cost (stejne jako u Truffle)
