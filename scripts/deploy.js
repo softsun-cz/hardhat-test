@@ -2,10 +2,12 @@ const hre = require("hardhat");
 
 async function main() {
  var sample = await deploy('Sample');
- var piggy = await collectionAdd(sample, 'Piggy');
- //console.log(piggy);
- var duck = await collectionAdd(sample, 'Duck');
- //console.log(duck);
+ await collectionAdd(sample, 'Piggy');
+ var ID = await sample.getCollectionsCount();
+ console.log(ID.toString());
+ await collectionAdd(sample, 'Duck');
+ ID = await sample.getCollectionsCount();
+ console.log(ID.toString());
  /*
  await propertyAdd(sample, piggy, 'Body');
  await propertyAdd(sample, piggy, 'Ears');
@@ -37,10 +39,10 @@ async function deploy(name) {
 
 async function collectionAdd(contract, name) {
  console.log('Adding collection: \"' + name + '\"');
- var collection = await contract.collectionAdd(name).call;
+ var x = await contract.collectionAdd(name);
+ console.log('Waiting...');
+ x.wait();
  console.log('Done.');
- console.log(collection);
- return collection; //.value.toString();
 }
 
 async function propertyAdd(contract, collection, name) {

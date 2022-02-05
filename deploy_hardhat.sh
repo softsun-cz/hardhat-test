@@ -2,7 +2,7 @@
 
 BUILD=build/
 LOG=deploy_hardhat.log
-NETWORKS=`node deploy-networks.js`
+NETWORKS=`node deploy-hardhat-networks.js`
 echo ''
 echo '---------------------------'
 echo 'List of available networks:'
@@ -32,10 +32,9 @@ if [ -d "$BUILD" ]; then
  echo "Removing old builds ..."
  rm -r $BUILD
 fi
-hardhat deploy --network $NETWORK 2>&1 | tee $LOG
-#npx hardhat run --network $NETWORK scripts/deploy.js
+npx hardhat run --network $NETWORK scripts/deploy.js 2>&1 | tee $LOG
 
-CONTRACTS=`node deploy-contracts.js`
+CONTRACTS=`node deploy-hardhat-contracts.js`
 ARRAY=($CONTRACTS)
 sw=false
 for i in "${!ARRAY[@]}"
@@ -48,10 +47,8 @@ do
   sw=false
  fi
 done
-hardhat run verify $VERIFY --network $NETWORK | tee -a $LOG
+npx hardhat verify --network $NETWORK $ADDRESSES | tee -a $LOG
 # npx hardhat verify --network $NETWORK DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1"
-
-
 
 # sw=false
 # for i in "${!ARRAY[@]}"
