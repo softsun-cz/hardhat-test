@@ -6,10 +6,6 @@ contract Sample {
     uint public collectionsCount;
     mapping(uint => Collection) public collections;
 
-    function getCollectionsCount() view public returns (uint) {
-        return collectionsCount;
-    }
-
     struct Collection {
         string name;
         Property[] properties;
