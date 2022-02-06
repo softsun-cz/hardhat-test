@@ -1,16 +1,16 @@
 const hre = require("hardhat");
 
 async function main() {
- var contracts = ['Sample'];
- for (var i = 0; i < contracts.length; i++) var contract[i] = await deploy(contract[i]);
- /*
+ var sample = await deploy('Sample');
  await collectionAdd(sample, 'Piggy');
  var ID = await sample.getCollectionsCount();
  console.log(ID.toString());
  await collectionAdd(sample, 'Duck');
  ID = await sample.getCollectionsCount();
  console.log(ID.toString());
- */
+
+
+ 
  /*
  await propertyAdd(sample, piggy, 'Body');
  await propertyAdd(sample, piggy, 'Ears');
@@ -22,26 +22,27 @@ async function main() {
  await propertyAdd(sample, duck, 'Eyes');
  await propertyAdd(sample, duck, 'Beak');
  await propertyAdd(sample, duck, 'Wings');
- */
+ 
  // LOG:
  console.log('');
  console.log('===================================================');
  for (var i = 0; i < contracts.length; i++) console.log('| ' + contract[i] + ': ' + contract[i].address + ' |');
  console.log('===================================================');
+ */
 }
 
-async function deploy(name) {
- var dash = '-'.repeat(name.length + 11);
+async function deploy() {
+ var dash = '-'.repeat(arguments[0].length + 11);
  console.log(dash);
- console.log('Deploying: ' + name);
+ console.log('Deploying: ' + arguments[0]);
  console.log(dash);
- const Contract = await ethers.getContractFactory(name);
+ const Contract = await ethers.getContractFactory(...arguments);
  const contract = await Contract.deploy();
  console.log('TX ID:   ' + contract.deployTransaction.hash);
  console.log('Address: ' + contract.address);
- //console.log(contract);
+ console.log(contract);
  const result = await contract.deployed();
- //console.log(result);
+ console.log(result);
  return result;
 }
 

@@ -10,7 +10,6 @@ contract Sample {
         return collectionsCount;
     }
 
-
     struct Collection {
         string name;
         Property[] properties;
