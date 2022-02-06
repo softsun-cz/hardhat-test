@@ -15,4 +15,6 @@ accounts.json
 .secret
 .secret_git
 .apikey_*
+yarn-error.log
 yarn.lock
+package-lock.json
