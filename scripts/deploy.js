@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 
 var netInfo;
 var contracts = [];
+var totalCost = ethers.BigNumber.from('0');
 const confirmNum = 3;
 
 async function main() {
@@ -13,6 +14,9 @@ async function main() {
  console.log('Deploying smart contracts ...');
  console.log();
  var sample = await deploy('Sample');
+ var sample2 = await deploy('Sample');
+ getTotalCost();
+ 
  /*
  var piggy = await collectionAdd(sample, 'Piggy');
  var duck = await collectionAdd(sample, 'Duck');
@@ -33,15 +37,15 @@ async function main() {
 
 async function getNetworkInfo() {
  var arr = [];
- const [minter] = await ethers.getSigners();
+ const account = (await ethers.getSigners())[0];
  arr['chainID'] = (await ethers.provider.getNetwork()).chainId;
  arr['name'] = 'Unknown';
  arr['rpc'] = 'Unknown';
  arr['currency'] = 'Unknown';
  arr['symbol'] = 'ETH';
  arr['explorer'] = 'https://etherscan.io';
- arr['walletAddress'] = minter.address;
- arr['walletBalance'] = ethers.utils.formatEther(await minter.getBalance());
+ arr['walletAddress'] = account.address;
+ arr['walletBalance'] = ethers.utils.formatEther(await account.getBalance());
  var response = await fetch('https://chainid.network/chains.json');
  var json = await response.json();
  json = JSON.stringify(json);
@@ -97,12 +101,15 @@ async function deploy() {
  console.log('Contract address: ' + contract.address);
  var balance = ethers.utils.formatEther(await (await ethers.getSigners())[0].getBalance()) + ' ' + netInfo['symbol'];
  console.log('Wallet balance:   ' + balance);
- console.log('Gas limit:        ' + contract.deployTransaction.gasLimit.toString());
- console.log('Gas price:        ' + ethers.utils.formatUnits(contract.deployTransaction.gasPrice.toString(), 'gwei') + ' gwei');
- console.log('Value sent:       ' + contract.deployTransaction.value.toString() + ' ' + netInfo['symbol']);
- //console.log(contract);
  var result = await contract.deployed();
- //console.log(result);
+ var receipt = await ethers.provider.getTransactionReceipt(contract.deployTransaction.hash);
+ console.log('Gas limit:        ' + result.deployTransaction.gasLimit.toString());
+ console.log('Gas used:         ' + receipt.gasUsed);
+ console.log('Gas price:        ' + ethers.utils.formatUnits(result.deployTransaction.gasPrice.toString(), 'gwei') + ' gwei');
+ console.log('Value sent:       ' + ethers.utils.formatEther(result.deployTransaction.value.toString()) + ' ' + netInfo['symbol']);
+ var cost = contract.deployTransaction.gasPrice.mul(receipt.gasUsed);
+ totalCost = totalCost.add(cost);
+ console.log('Deploy cost:      ' + ethers.utils.formatEther(cost.toString()) + ' ' + netInfo['symbol']);
  console.log();
  var cont = [];
  cont['name'] = arguments[0];
@@ -119,7 +126,15 @@ async function deploy() {
  }
  console.log();
  return result;
- //console.log(web3.utils.fromWei(balance, 'ether'), 'ETH');
+}
+
+function getTotalCost() {
+ var total = 'Total cost: ' + ethers.utils.formatEther(totalCost.toString()) + ' ' + netInfo['symbol'];
+ const eq = '='.repeat(total.length);
+ console.log(eq);
+ console.log(total);
+ console.log(eq);
+ console.log();
 }
 
 async function getSummary() {

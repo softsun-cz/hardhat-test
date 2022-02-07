@@ -1,10 +1,5 @@
 - dodelat deploy():
  > block number:        24326744
  > block timestamp:     1643318263
- > gas used:            2183115 (0x214fcb)
- > total cost:          0.005457787524014265 ETH
-- RPC URL brat z configu, ne z JSONu
-
-
 - misto getProperties dat getProperty (col, prp)
 - zjistit, jestli se properties seradily ve spravnem poradi
