@@ -3,49 +3,20 @@ const fetch = require('node-fetch');
 
 var netInfo;
 
-async function getNetworkInfo() {
- var arr = [];
- arr['chainID'] = (await ethers.provider.getNetwork()).chainId;
- arr['name'] = 'Unknown';
- arr['rpc'] = 'Unknown';
- arr['currency'] = 'Unknown';
- arr['symbol'] = 'ETH';
- arr['explorer'] = 'https://etherscan.io';
- var response = await fetch('https://chainid.network/chains.json');
- var json = await response.json();
- json = JSON.stringify(json);
- var arrJSON = JSON.parse(json);
- for (var i = 0; i < arrJSON.length; i++) {
-  if (arrJSON[i].chainId == arr['chainID']) {
-   if (!!arrJSON[i].name) arr['name'] = arrJSON[i].name;
-   if (!!arrJSON[i].rpc) arr['rpc'] = arrJSON[i].rpc;
-   if (!!arrJSON[i].nativeCurrency.name) arr['currency'] = arrJSON[i].nativeCurrency.name;
-   if (!!arrJSON[i].nativeCurrency.symbol) arr['symbol'] = arrJSON[i].nativeCurrency.symbol;
-   if (!!arrJSON[i].explorers[0].url) arr['explorer'] = arrJSON[i].explorers[0].url;
-  }
- }
- return arr;
-}
-
 async function main() {
- netInfo = await getNetworkInfo();
+ 
  console.log('');
  console.log('======================');
  console.log('Sample - deploy script');
  console.log('======================');
  console.log('');
- console.log('Network info:');
+ netInfo = await getNetworkInfo();
+ getNetworkMessage();
  console.log('');
- console.log('Chain name:     ' + netInfo['name']);
- console.log('Chain ID:       ' + netInfo['chainID']);
- console.log('RPC URL:        ' + netInfo['rpc']);
- console.log('Currency:       ' + netInfo['currency'] + ' (' + netInfo['symbol'] + ')');
- console.log('Block explorer: ' + netInfo['explorer']);
- console.log('');
- console.log('');
- console.log('Deploying smart contracts:');
+ console.log('Deploying smart contracts ...');
  console.log('');
  var sample = await deploy('Sample');
+ 
  /*
  await collectionAdd(sample, 'Piggy');
  var ID = await sample.collectionsCount();
@@ -77,6 +48,41 @@ async function main() {
  */
 }
 
+async function getNetworkInfo() {
+ var arr = [];
+ arr['chainID'] = (await ethers.provider.getNetwork()).chainId;
+ arr['name'] = 'Unknown';
+ arr['rpc'] = 'Unknown';
+ arr['currency'] = 'Unknown';
+ arr['symbol'] = 'ETH';
+ arr['explorer'] = 'https://etherscan.io';
+ var response = await fetch('https://chainid.network/chains.json');
+ var json = await response.json();
+ json = JSON.stringify(json);
+ var arrJSON = JSON.parse(json);
+ for (var i = 0; i < arrJSON.length; i++) {
+  if (arrJSON[i].chainId == arr['chainID']) {
+   if (!!arrJSON[i].name) arr['name'] = arrJSON[i].name;
+   if (!!arrJSON[i].rpc) arr['rpc'] = arrJSON[i].rpc;
+   if (!!arrJSON[i].nativeCurrency.name) arr['currency'] = arrJSON[i].nativeCurrency.name;
+   if (!!arrJSON[i].nativeCurrency.symbol) arr['symbol'] = arrJSON[i].nativeCurrency.symbol;
+   if (!!arrJSON[i].explorers[0].url) arr['explorer'] = arrJSON[i].explorers[0].url;
+  }
+ }
+ return arr;
+}
+
+function getNetworkMessage() {
+ console.log('Network info:');
+ console.log('');
+ console.log('Chain name:      ' + netInfo['name']);
+ console.log('Chain ID:        ' + netInfo['chainID']);
+ console.log('RPC URL:         ' + netInfo['rpc']);
+ console.log('Currency:        ' + netInfo['currency'] + ' (' + netInfo['symbol'] + ')');
+ console.log('Block explorer:  ' + netInfo['explorer']);
+ console.log('');
+}
+
 async function deploy() {
  if (arguments.length == 0) {
   console.log('Error: Missing smart contract name');
@@ -84,7 +90,7 @@ async function deploy() {
   return;
  }
  const confirmNum = 2;
- var dash = '-'.repeat(arguments[0].length);
+ const dash = '-'.repeat(arguments[0].length);
  console.log(dash);
  console.log(arguments[0]);
  console.log(dash);
@@ -102,21 +108,15 @@ async function deploy() {
   await result.wait(1);
  }
  */
- console.log(result.deployTransaction);
- 
- 
- 
-
-
+ //console.log(result.deployTransaction);
  var balance = await ethers.provider.getBalance(result.deployTransaction.from);
- balance = ethers.utils.formatEther(balance) + chainFound ? ' ' + symbol : ' ETH';
+ balance = ethers.utils.formatEther(balance) +  ' ' + netInfo['symbol'];
  console.log('Wallet address: ' + result.deployTransaction.from);
  console.log('Wallet balance: ' + balance);
  console.log('Gas limit:      ' + result.deployTransaction.gasLimit.toString());
  console.log('Gas price:      ' + result.deployTransaction.gasPrice.toString());
  console.log("Value sent:     " + result.deployTransaction.value.toString());
  return result;
- 
  //console.log(web3.utils.fromWei(balance, 'ether'), 'ETH');
 
  /*
