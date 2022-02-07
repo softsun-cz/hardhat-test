@@ -159,7 +159,7 @@ async function collectionAdd(contract, name) {
 
 async function propertyAdd(contract, collection, name) {
  console.log('Adding property: \"' + name + '\" to collection ID: ' + collection);
- var property = contract.propertyAdd(collection, name);
+ var property = await contract.propertyAdd(collection, name);
  console.log('Done.');
 }
 

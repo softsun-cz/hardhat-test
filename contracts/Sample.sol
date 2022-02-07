@@ -37,15 +37,9 @@ contract Sample {
         delete collections[_collectionID].properties[_propertyID];
     }
 
-    function getCollections() public view returns (Collection[] memory) {
-        Collection[] memory col;
-        for (uint i = 0; i < collectionsCount; i++) {
-            if (bytes(collections[i].name).length > 0) col[i] = collections[i];
-        }
-        return col;
-    }
-
     function getProperty(uint _collectionID, uint _propertyID) public view returns (Property memory) {
+        require(_collectionID <= collectionsCount, 'getProperty: Wrong collection ID');
+        require(_propertyID <= collections[_collectionID].properties.length, 'getProperty: Wrong property ID');
         return collections[_collectionID].properties[_propertyID];
     }
 }
