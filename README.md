@@ -11,3 +11,19 @@ This project demonstrates a basic Hardhat use case. It comes with a sample contr
 yarn install
 ./deploy_hardhat.sh
 ```
+
+## Interact with your smart contract:
+
+```console
+npx hardhat console --network NETWORK_NAME
+> var Contract = await ethers.getContractFactory('CONTRACT_NAME');
+> var contract = await Contract.attach('CONTRACT_ADDRESS');
+```
+
+### Example:
+
+```console
+npx hardhat console --network polygonTestnet
+> var Contract = await ethers.getContractFactory('Sample');
+> var contract = await Contract.attach('0x1234567890123456789012345678901234567890');
+```

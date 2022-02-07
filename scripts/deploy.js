@@ -4,25 +4,17 @@ const fetch = require('node-fetch');
 var netInfo;
 
 async function main() {
- getWelcomeMessage('Sample')
+ getWelcomeMessage('Sample project');
  netInfo = await getNetworkInfo();
  getNetworkMessage();
  console.log('');
  console.log('Deploying smart contracts ...');
  console.log('');
  var sample = await deploy('Sample');
+ var sample2 = await deploy('Sample');
  
- /*
- await collectionAdd(sample, 'Piggy');
- var ID = await sample.collectionsCount();
- console.log(ID.toString());
- 
- await collectionAdd(sample, 'Duck');
- ID = await sample.collectionsCount();
- console.log(ID.toString());
-*/
-
- /*
+ var piggy = await collectionAdd(sample, 'Piggy');
+ var duck = await collectionAdd(sample, 'Duck');
  await propertyAdd(sample, piggy, 'Body');
  await propertyAdd(sample, piggy, 'Ears');
  await propertyAdd(sample, piggy, 'Eyes');
@@ -33,24 +25,25 @@ async function main() {
  await propertyAdd(sample, duck, 'Eyes');
  await propertyAdd(sample, duck, 'Beak');
  await propertyAdd(sample, duck, 'Wings');
- */
  // LOG:
- /*
+ 
  console.log('');
  console.log('======================================================');
  console.log('| Sample: ' + sample.address + ' |');
  console.log('======================================================');
- */
 }
 
 async function getNetworkInfo() {
  var arr = [];
+ const [minter] = await ethers.getSigners();
  arr['chainID'] = (await ethers.provider.getNetwork()).chainId;
  arr['name'] = 'Unknown';
  arr['rpc'] = 'Unknown';
  arr['currency'] = 'Unknown';
  arr['symbol'] = 'ETH';
  arr['explorer'] = 'https://etherscan.io';
+ arr['walletAddress'] = minter.address;
+ arr['walletBalance'] = ethers.utils.formatEther(await minter.getBalance());
  var response = await fetch('https://chainid.network/chains.json');
  var json = await response.json();
  json = JSON.stringify(json);
@@ -68,7 +61,7 @@ async function getNetworkInfo() {
 }
 
 function getWelcomeMessage(name) {
- const eq = '-'.repeat(arguments[0].length + 16);
+ const eq = '='.repeat(arguments[0].length + 16);
  console.log('');
  console.log(eq);
  console.log(name + ' - deploy script');
@@ -84,6 +77,8 @@ function getNetworkMessage() {
  console.log('RPC URL:         ' + netInfo['rpc']);
  console.log('Currency:        ' + netInfo['currency'] + ' (' + netInfo['symbol'] + ')');
  console.log('Block explorer:  ' + netInfo['explorer']);
+ console.log('Wallet address:  ' + netInfo['walletAddress']);
+ console.log('Wallet balance:  ' + netInfo['walletBalance'] + ' ' + netInfo['symbol']);
  console.log('');
 }
 
@@ -101,8 +96,8 @@ async function deploy() {
  console.log('');
  const Contract = await ethers.getContractFactory(...arguments);
  const contract = await Contract.deploy();
- console.log('TX ID:          ' + contract.deployTransaction.hash);
- console.log('Address:        ' + contract.address);
+ console.log('Contract TX ID:   ' + contract.deployTransaction.hash);
+ console.log('Contract address: ' + contract.address);
  //console.log(contract);
  const result = await contract.deployed();
  /*
@@ -119,27 +114,19 @@ async function deploy() {
  console.log('Wallet balance: ' + balance);
  console.log('Gas limit:      ' + result.deployTransaction.gasLimit.toString());
  console.log('Gas price:      ' + result.deployTransaction.gasPrice.toString());
- console.log("Value sent:     " + result.deployTransaction.value.toString());
+ console.log('Value sent:     ' + result.deployTransaction.value.toString());
+ console.log('');
  return result;
  //console.log(web3.utils.fromWei(balance, 'ether'), 'ETH');
-
- /*
-> block number:        24326744
-> block timestamp:     1643318263
-> balance:             21.278893990918758695
-> gas used:            2183115 (0x214fcb)
-> gas price:           2.500000011 gwei
-> total cost:          0.005457787524014265 ETH
-*/
-
 }
 
 async function collectionAdd(contract, name) {
  console.log('Adding collection: \"' + name + '\"');
- var x = await contract.collectionAdd(name);
- console.log('Waiting...');
- await x.wait(1);
+ var col = await contract.collectionAdd(name);
+ console.log('Waiting for 1 confirmation...');
+ await col.wait(1);
  console.log('Done.');
+ return (await contract.collectionsCount() - 1).toString();
 }
 
 async function propertyAdd(contract, collection, name) {

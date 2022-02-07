@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BUILD=build/
 LOG=deploy_hardhat.log
+DEPLOY_SCRIPT=scripts/deploy.js;
 NETWORKS=`node deploy-hardhat-networks.js`
 echo ''
 echo '---------------------------'
@@ -28,27 +28,15 @@ if [ "$NETWORK" = '' ] || [ "$((NET - 1))" = -1 ]; then
 fi
 echo 'Deploying on:' $NETWORK '...'
 echo ''
-if [ -d "$BUILD" ]; then
- echo "Removing old builds ..."
- rm -r $BUILD
-fi
-npx hardhat run --network $NETWORK scripts/deploy.js 2>&1 | tee $LOG
+npx hardhat run --network $NETWORK $DEPLOY_SCRIPT 2>&1 | tee $LOG
 
 CONTRACTS=`node deploy-hardhat-contracts.js`
 ARRAY=($CONTRACTS)
-sw=false
 for i in "${!ARRAY[@]}"
 do
- if [ $sw = false ]; then
-  NAME=${ARRAY[$i]}
-  VERIFY="$VERIFY $NAME"
-  sw=true
- else
-  sw=false
- fi
+ ADDRESS=${ARRAY[$i]}
+ npx hardhat verify --network $NETWORK $ADDRESS | tee -a $LOG
 done
-npx hardhat verify --network $NETWORK $ADDRESSES | tee -a $LOG
-# npx hardhat verify --network $NETWORK DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1"
 
 # sw=false
 # for i in "${!ARRAY[@]}"
