@@ -1,5 +1,2 @@
-- dodelat deploy():
- > block number:        24326744
- > block timestamp:     1643318263
 - misto getProperties dat getProperty (col, prp)
 - zjistit, jestli se properties seradily ve spravnem poradi
