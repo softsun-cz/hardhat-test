@@ -45,7 +45,7 @@ contract Sample {
         return col;
     }
 
-    function getProperties(uint _collectionID) public view returns (Property[] memory) {
-        return collections[_collectionID].properties;
+    function getProperty(uint _collectionID, uint _propertyID) public view returns (Property memory) {
+        return collections[_collectionID].properties[_propertyID];
     }
 }

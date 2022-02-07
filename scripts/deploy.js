@@ -15,7 +15,6 @@ async function main() {
  console.log();
  var sample = await deploy('Sample');
  getTotalCost();
- 
  /*
  var piggy = await collectionAdd(sample, 'Piggy');
  var duck = await collectionAdd(sample, 'Duck');
@@ -102,9 +101,8 @@ async function deploy() {
  console.log('Wallet balance:   ' + balance);
  var result = await contract.deployed();
  var receipt = await ethers.provider.getTransactionReceipt(contract.deployTransaction.hash);
- var blockNumber = (await contract.deployTransaction.blockNumber);
- var blockTimestamp = (await ethers.provider.getBlock(blockNumber)).timestamp;
- console.log('Block number:     ' + blockNumber.toString());
+ var blockTimestamp = (await ethers.provider.getBlock(receipt.blockNumber)).timestamp;
+ console.log('Block number:     ' + receipt.blockNumber.toString());
  console.log('Block timestamp:  ' + blockTimestamp.toString());
  console.log('Gas limit:        ' + result.deployTransaction.gasLimit.toString());
  console.log('Gas used:         ' + receipt.gasUsed);
