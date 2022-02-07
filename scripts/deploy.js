@@ -2,17 +2,18 @@ const hre = require('hardhat');
 const fetch = require('node-fetch');
 
 var netInfo;
+var contracts = [];
 
 async function main() {
  getWelcomeMessage('Sample project');
  netInfo = await getNetworkInfo();
  getNetworkMessage();
- console.log('');
+ console.log();
  console.log('Deploying smart contracts ...');
- console.log('');
+ console.log();
  var sample = await deploy('Sample');
  var sample2 = await deploy('Sample');
- 
+ /*
  var piggy = await collectionAdd(sample, 'Piggy');
  var duck = await collectionAdd(sample, 'Duck');
  await propertyAdd(sample, piggy, 'Body');
@@ -26,11 +27,8 @@ async function main() {
  await propertyAdd(sample, duck, 'Beak');
  await propertyAdd(sample, duck, 'Wings');
  // LOG:
- 
- console.log('');
- console.log('======================================================');
- console.log('| Sample: ' + sample.address + ' |');
- console.log('======================================================');
+ */
+ await getSummary();
 }
 
 async function getNetworkInfo() {
@@ -62,16 +60,16 @@ async function getNetworkInfo() {
 
 function getWelcomeMessage(name) {
  const eq = '='.repeat(arguments[0].length + 16);
- console.log('');
+ console.log();
  console.log(eq);
  console.log(name + ' - deploy script');
  console.log(eq);
- console.log('');
+ console.log();
 }
 
 function getNetworkMessage() {
  console.log('Network info:');
- console.log('');
+ console.log();
  console.log('Chain name:      ' + netInfo['name']);
  console.log('Chain ID:        ' + netInfo['chainID']);
  console.log('RPC URL:         ' + netInfo['rpc']);
@@ -79,21 +77,21 @@ function getNetworkMessage() {
  console.log('Block explorer:  ' + netInfo['explorer']);
  console.log('Wallet address:  ' + netInfo['walletAddress']);
  console.log('Wallet balance:  ' + netInfo['walletBalance'] + ' ' + netInfo['symbol']);
- console.log('');
+ console.log();
 }
 
 async function deploy() {
  if (arguments.length == 0) {
   console.log('Error: Missing smart contract name');
-  console.log('');
+  console.log();
   return;
  }
  const confirmNum = 2;
- const dash = '-'.repeat(arguments[0].length);
+ const dash = '-'.repeat(arguments[0].length + 10);
  console.log(dash);
- console.log(arguments[0]);
+ console.log('Contract: ' + arguments[0]);
  console.log(dash);
- console.log('');
+ console.log();
  const Contract = await ethers.getContractFactory(...arguments);
  const contract = await Contract.deploy();
  console.log('Contract TX ID:   ' + contract.deployTransaction.hash);
@@ -110,14 +108,30 @@ async function deploy() {
  //console.log(result.deployTransaction);
  var balance = await ethers.provider.getBalance(result.deployTransaction.from);
  balance = ethers.utils.formatEther(balance) +  ' ' + netInfo['symbol'];
- console.log('Wallet address: ' + result.deployTransaction.from);
- console.log('Wallet balance: ' + balance);
- console.log('Gas limit:      ' + result.deployTransaction.gasLimit.toString());
- console.log('Gas price:      ' + result.deployTransaction.gasPrice.toString());
- console.log('Value sent:     ' + result.deployTransaction.value.toString());
- console.log('');
+ console.log('Wallet address:   ' + result.deployTransaction.from);
+ console.log('Wallet balance:   ' + balance);
+ console.log('Gas limit:        ' + result.deployTransaction.gasLimit.toString());
+ console.log('Gas price:        ' + result.deployTransaction.gasPrice.toString());
+ console.log('Value sent:       ' + result.deployTransaction.value.toString());
+ console.log();
+ var contractID = contracts.length;
+ var cont = [];
+ cont['name'] = arguments[0];
+ cont['address'] = contract.address;
+ contracts.push(cont);
  return result;
  //console.log(web3.utils.fromWei(balance, 'ether'), 'ETH');
+}
+
+async function getSummary() {
+ console.log('===================');
+ console.log('Deployed contracts:');
+ console.log('===================');
+ console.log();
+ for (var i = 0; i < contracts.length; i++) {
+  console.log(contracts[i]['name'] + ': ' + netInfo['explorer'] + '/address/' + contracts[i]['address']);
+ }
+ console.log();
 }
 
 async function collectionAdd(contract, name) {
