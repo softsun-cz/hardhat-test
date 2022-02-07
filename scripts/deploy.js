@@ -65,6 +65,8 @@ function getWelcomeMessage(name) {
  console.log(name + ' - deploy script');
  console.log(eq);
  console.log();
+ console.log('Start time: ' + Date.now());
+ console.log();
 }
 
 function getNetworkMessage() {
@@ -131,6 +133,8 @@ async function getSummary() {
  for (var i = 0; i < contracts.length; i++) {
   console.log(contracts[i]['name'] + ': ' + netInfo['explorer'] + '/address/' + contracts[i]['address']);
  }
+ console.log();
+ console.log('End time: ' + Date.now());
  console.log();
 }
 
