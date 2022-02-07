@@ -4,12 +4,7 @@ const fetch = require('node-fetch');
 var netInfo;
 
 async function main() {
- 
- console.log('');
- console.log('======================');
- console.log('Sample - deploy script');
- console.log('======================');
- console.log('');
+ getWelcomeMessage('Sample')
  netInfo = await getNetworkInfo();
  getNetworkMessage();
  console.log('');
@@ -70,6 +65,15 @@ async function getNetworkInfo() {
   }
  }
  return arr;
+}
+
+function getWelcomeMessage(name) {
+ const eq = '-'.repeat(arguments[0].length + 16);
+ console.log('');
+ console.log(eq);
+ console.log(name + ' - deploy script');
+ console.log(eq);
+ console.log('');
 }
 
 function getNetworkMessage() {
