@@ -1,8 +1,9 @@
-const hre = require('hardhat');
+//const hre = require('hardhat');
 const fetch = require('node-fetch');
 
 var netInfo;
 var contracts = [];
+const confirmNum = 3;
 
 async function main() {
  getWelcomeMessage('Sample project');
@@ -12,7 +13,6 @@ async function main() {
  console.log('Deploying smart contracts ...');
  console.log();
  var sample = await deploy('Sample');
- var sample2 = await deploy('Sample');
  /*
  var piggy = await collectionAdd(sample, 'Piggy');
  var duck = await collectionAdd(sample, 'Duck');
@@ -49,7 +49,6 @@ async function getNetworkInfo() {
  for (var i = 0; i < arrJSON.length; i++) {
   if (arrJSON[i].chainId == arr['chainID']) {
    if (!!arrJSON[i].name) arr['name'] = arrJSON[i].name;
-   if (!!arrJSON[i].rpc) arr['rpc'] = arrJSON[i].rpc;
    if (!!arrJSON[i].nativeCurrency.name) arr['currency'] = arrJSON[i].nativeCurrency.name;
    if (!!arrJSON[i].nativeCurrency.symbol) arr['symbol'] = arrJSON[i].nativeCurrency.symbol;
    if (!!arrJSON[i].explorers[0].url) arr['explorer'] = arrJSON[i].explorers[0].url;
@@ -65,7 +64,7 @@ function getWelcomeMessage(name) {
  console.log(name + ' - deploy script');
  console.log(eq);
  console.log();
- console.log('Start time: ' + Date.now());
+ console.log('Start time: ' + new Date(Date.now()).toLocaleString());
  console.log();
 }
 
@@ -74,7 +73,6 @@ function getNetworkMessage() {
  console.log();
  console.log('Chain name:      ' + netInfo['name']);
  console.log('Chain ID:        ' + netInfo['chainID']);
- console.log('RPC URL:         ' + netInfo['rpc']);
  console.log('Currency:        ' + netInfo['currency'] + ' (' + netInfo['symbol'] + ')');
  console.log('Block explorer:  ' + netInfo['explorer']);
  console.log('Wallet address:  ' + netInfo['walletAddress']);
@@ -88,7 +86,6 @@ async function deploy() {
   console.log();
   return;
  }
- const confirmNum = 2;
  const dash = '-'.repeat(arguments[0].length + 10);
  console.log(dash);
  console.log('Contract: ' + arguments[0]);
@@ -98,29 +95,29 @@ async function deploy() {
  const contract = await Contract.deploy();
  console.log('Contract TX ID:   ' + contract.deployTransaction.hash);
  console.log('Contract address: ' + contract.address);
- //console.log(contract);
- const result = await contract.deployed();
- /*
- console.log('Waiting for ' + i + ' confirmations...' + i);
- for (var i = 0; i <= confirmNum; i++) {
-  console.log('Confirmation: ' + i);
-  await result.wait(1);
- }
- */
- //console.log(result.deployTransaction);
- var balance = await ethers.provider.getBalance(result.deployTransaction.from);
- balance = ethers.utils.formatEther(balance) +  ' ' + netInfo['symbol'];
- console.log('Wallet address:   ' + result.deployTransaction.from);
+ var balance = ethers.utils.formatEther(await (await ethers.getSigners())[0].getBalance()) + ' ' + netInfo['symbol'];
  console.log('Wallet balance:   ' + balance);
- console.log('Gas limit:        ' + result.deployTransaction.gasLimit.toString());
- console.log('Gas price:        ' + result.deployTransaction.gasPrice.toString());
- console.log('Value sent:       ' + result.deployTransaction.value.toString());
+ console.log('Gas limit:        ' + contract.deployTransaction.gasLimit.toString());
+ console.log('Gas price:        ' + ethers.utils.formatUnits(contract.deployTransaction.gasPrice.toString(), 'gwei') + ' gwei');
+ console.log('Value sent:       ' + contract.deployTransaction.value.toString() + ' ' + netInfo['symbol']);
+ //console.log(contract);
+ var result = await contract.deployed();
+ //console.log(result);
  console.log();
- var contractID = contracts.length;
  var cont = [];
  cont['name'] = arguments[0];
  cont['address'] = contract.address;
  contracts.push(cont);
+ console.log('Waiting for ' + confirmNum + ' confirmations...');
+ console.log();
+ var confirmations = 0;
+ var lastConfirmation = -1;
+ while (confirmations < confirmNum) {
+  confirmations = (await contract.deployTransaction.wait(1)).confirmations;
+  if (lastConfirmation != confirmations) console.log('Confirmation: ' + confirmations);
+  lastConfirmation = confirmations;
+ }
+ console.log();
  return result;
  //console.log(web3.utils.fromWei(balance, 'ether'), 'ETH');
 }
@@ -134,7 +131,7 @@ async function getSummary() {
   console.log(contracts[i]['name'] + ': ' + netInfo['explorer'] + '/address/' + contracts[i]['address']);
  }
  console.log();
- console.log('End time: ' + Date.now());
+ console.log('End time: ' + new Date(Date.now()).toLocaleString());
  console.log();
 }
 

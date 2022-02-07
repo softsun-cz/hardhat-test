@@ -1,12 +1,10 @@
-- rpc url brat z configu, ne z JSONu
-- pridat na zacatek time
-- pridat u deploy waiting (x bloku)
-- misto getProperties dat getProperty (col, prp)
-- zjistit, jestli se properties seradily ve spravnem poradi
 - dodelat deploy():
  > block number:        24326744
  > block timestamp:     1643318263
- > balance:             21.278893990918758695
  > gas used:            2183115 (0x214fcb)
- > gas price:           2.500000011 gwei
  > total cost:          0.005457787524014265 ETH
+- RPC URL brat z configu, ne z JSONu
+
+
+- misto getProperties dat getProperty (col, prp)
+- zjistit, jestli se properties seradily ve spravnem poradi
