@@ -1,2 +1,0 @@
-- misto getProperties dat getProperty (col, prp)
-- zjistit, jestli se properties seradily ve spravnem poradi
