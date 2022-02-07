@@ -15,7 +15,6 @@ async function main() {
  console.log();
  var sample = await deploy('Sample');
  getTotalCost();
- await getSummary();
  var piggy = await collectionAdd(sample, 'Piggy');
  var duck = await collectionAdd(sample, 'Duck');
  await propertyAdd(sample, piggy, 'Body');
@@ -28,6 +27,7 @@ async function main() {
  await propertyAdd(sample, duck, 'Eyes');
  await propertyAdd(sample, duck, 'Beak');
  await propertyAdd(sample, duck, 'Wings');
+ await getSummary();
 }
 
 async function getNetworkInfo() {
