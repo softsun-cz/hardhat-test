@@ -151,9 +151,14 @@ async function getSummary() {
 async function collectionAdd(contract, name) {
  console.log('Adding collection: \"' + name + '\"');
  var col = await contract.collectionAdd(name);
+ console.log(col);
  console.log('Waiting for 1 confirmation...');
  await col.wait(1);
  console.log('Done.');
+ 
+ //var receipt = await ethers.provider.getTransactionReceipt(contract.deployTransaction.hash);
+ //var cost = contract.deployTransaction.gasPrice.mul(receipt.gasUsed);
+ 
  return (await contract.collectionsCount() - 1).toString();
 }
 
