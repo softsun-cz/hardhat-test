@@ -27,6 +27,7 @@ async function main() {
  await propertyAdd(sample, duck, 'Eyes');
  await propertyAdd(sample, duck, 'Beak');
  await propertyAdd(sample, duck, 'Wings');
+ getTotalCost();
  await getSummary();
 }
 
@@ -151,21 +152,28 @@ async function getSummary() {
 async function collectionAdd(contract, name) {
  console.log('Adding collection: \"' + name + '\"');
  var col = await contract.collectionAdd(name);
- console.log(col);
  console.log('Waiting for 1 confirmation...');
  await col.wait(1);
  console.log('Done.');
- 
- //var receipt = await ethers.provider.getTransactionReceipt(contract.deployTransaction.hash);
- //var cost = contract.deployTransaction.gasPrice.mul(receipt.gasUsed);
- 
+ var receipt = await ethers.provider.getTransactionReceipt(col.hash);
+ var cost = col.gasPrice.mul(receipt.gasUsed);
+ console.log('Transaction cost: ' + ethers.utils.formatEther(cost.toString()) + ' ' + netInfo['symbol']);
+ totalCost = totalCost.add(cost);
+ console.log();
  return (await contract.collectionsCount() - 1).toString();
 }
 
 async function propertyAdd(contract, collection, name) {
  console.log('Adding property: \"' + name + '\" to collection ID: ' + collection);
  var property = await contract.propertyAdd(collection, name);
+ console.log('Waiting for 1 confirmation...');
+ await property.wait(1);
  console.log('Done.');
+ var receipt = await ethers.provider.getTransactionReceipt(property.hash);
+ var cost = property.gasPrice.mul(receipt.gasUsed);
+ console.log('Transaction cost: ' + ethers.utils.formatEther(cost.toString()) + ' ' + netInfo['symbol']);
+ totalCost = totalCost.add(cost);
+ console.log();
 }
 
 main()
