@@ -86,13 +86,15 @@ async function deploy() {
   console.log();
   return;
  }
+ var params = [];
+ if (arguments.length > 1) for (var i = 1; i < arguments.length; i++) params.push(arguments[i]);
  const dash = '-'.repeat(arguments[0].length + 10);
  console.log(dash);
  console.log('Contract: ' + arguments[0]);
  console.log(dash);
  console.log();
- const Contract = await ethers.getContractFactory(...arguments);
- const contract = await Contract.deploy();
+ const Contract = await ethers.getContractFactory(arguments[0]);
+ const contract = await Contract.deploy(...params);
  console.log('Contract TX ID:   ' + contract.deployTransaction.hash);
  console.log('Contract address: ' + contract.address);
  var balance = ethers.utils.formatEther(await (await ethers.getSigners())[0].getBalance()) + ' ' + netInfo['symbol'];
