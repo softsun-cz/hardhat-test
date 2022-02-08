@@ -5,7 +5,7 @@ var netInfo;
 var contracts = [];
 var totalCost = ethers.BigNumber.from('0');
 var verifyScript = '';
-const confirmNum = 3;
+const confirmNum = 1;
 
 async function main() {
  getWelcomeMessage('Sample project');
@@ -144,11 +144,11 @@ function getTotalCost() {
 }
 
 function createVerifyScript() {
-    const fs = require('fs');
-    var verifyFile = './verify.sh';
-    if (fs.existsSync(verifyFile)) fs.unlinkSync(verifyFile);
-    fs.writeFileSync(verifyFile, '#!/bin/sh' + "\n\n" + verifyScript);
-    fs.chmodSync(verifyFile, 0o755);
+ const fs = require('fs');
+ var verifyFile = './verify.sh';
+ if (fs.existsSync(verifyFile)) fs.unlinkSync(verifyFile);
+ fs.writeFileSync(verifyFile, '#!/bin/sh' + "\n\n" + verifyScript);
+ fs.chmodSync(verifyFile, 0o755);
 }
 
 async function getSummary() {
@@ -164,31 +164,34 @@ async function getSummary() {
  console.log();
 }
 
-async function collectionAdd(contract, name) {
- console.log('Adding collection: \"' + name + '\"');
- var col = await contract.collectionAdd(name);
+async function runFunction() {
+ if (arguments.length < 2) {
+  console.log('Error: Missing parameters');
+  console.log();
+  return;
+ }
+ var params = [];
+ if (arguments.length > 2) for (var i = 2; i < arguments.length; i++) params.push(arguments[i]);
+ var res = await arguments[0][arguments[1]](...params);
  console.log('Waiting for 1 confirmation...');
- await col.wait(1);
+ await res.wait(1);
  console.log('Done.');
- var receipt = await ethers.provider.getTransactionReceipt(col.hash);
- var cost = col.gasPrice.mul(receipt.gasUsed);
+ var receipt = await ethers.provider.getTransactionReceipt(res.hash);
+ var cost = res.gasPrice.mul(receipt.gasUsed);
  console.log('Transaction cost: ' + ethers.utils.formatEther(cost.toString()) + ' ' + netInfo['symbol']);
  totalCost = totalCost.add(cost);
  console.log();
+}
+
+async function collectionAdd(contract, name) {
+ console.log('Adding collection: \"' + name + '\"');
+ await runFunction(contract, 'collectionAdd', name);
  return (await contract.collectionsCount() - 1).toString();
 }
 
 async function propertyAdd(contract, collection, name) {
  console.log('Adding property: \"' + name + '\" to collection ID: ' + collection);
- var property = await contract.propertyAdd(collection, name);
- console.log('Waiting for 1 confirmation...');
- await property.wait(1);
- console.log('Done.');
- var receipt = await ethers.provider.getTransactionReceipt(property.hash);
- var cost = property.gasPrice.mul(receipt.gasUsed);
- console.log('Transaction cost: ' + ethers.utils.formatEther(cost.toString()) + ' ' + netInfo['symbol']);
- totalCost = totalCost.add(cost);
- console.log();
+ await runFunction(contract, 'propertyAdd', collection, name);
 }
 
 main()
