@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LOG=deploy_hardhat.log
-DEPLOY_SCRIPT=scripts/deploy.js;
+DEPLOY_SCRIPT=scripts/deploy.js
 NETWORKS=`node deploy-hardhat-networks.js`
 echo ''
 echo '---------------------------'
