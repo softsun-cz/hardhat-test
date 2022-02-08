@@ -42,4 +42,9 @@ contract Sample {
         require(_propertyID <= collections[_collectionID].properties.length, 'getProperty: Wrong property ID');
         return collections[_collectionID].properties[_propertyID];
     }
+
+    function getPropertiesCount(uint _collectionID) public view returns (uint) {
+        require(bytes(collections[_collectionID].name).length > 0, 'getPropertiesCount: Wrong collection ID');
+        return collections[_collectionID].properties.length;
+    }
 }
