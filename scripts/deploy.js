@@ -4,6 +4,7 @@ const fetch = require('node-fetch');
 var netInfo;
 var contracts = [];
 var totalCost = ethers.BigNumber.from('0');
+var verifyScript = '';
 const confirmNum = 3;
 
 async function main() {
@@ -27,6 +28,7 @@ async function main() {
  await propertyAdd(sample, duck, 'Eyes');
  await propertyAdd(sample, duck, 'Beak');
  await propertyAdd(sample, duck, 'Wings');
+ createVerifyScript();
  getTotalCost();
  await getSummary();
 }
@@ -126,6 +128,9 @@ async function deploy() {
   lastConfirmation = confirmations;
  }
  console.log();
+ verifyScript += 'npx hardhat verify --network $1 --contract contracts/' + arguments[0] + '.sol:' + arguments[0] + ' ' + contract.address;
+ if (arguments.length > 1) for (var i = 1; i < arguments.length; i++) verifyScript += ' "' + arguments[i] + '"';
+ verifyScript += "\n";
  return result;
 }
 
@@ -136,6 +141,14 @@ function getTotalCost() {
  console.log(total);
  console.log(eq);
  console.log();
+}
+
+function createVerifyScript() {
+    const fs = require('fs');
+    var verifyFile = './verify.sh';
+    if (fs.existsSync(verifyFile)) fs.unlinkSync(verifyFile);
+    fs.writeFileSync(verifyFile, '#!/bin/sh' + "\n\n" + verifyScript);
+    fs.chmodSync(verifyFile, 0o755);
 }
 
 async function getSummary() {
