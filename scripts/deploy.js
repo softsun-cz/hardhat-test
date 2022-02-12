@@ -1,4 +1,3 @@
-//const hre = require('hardhat');
 const fetch = require('node-fetch');
 
 var netInfo;
